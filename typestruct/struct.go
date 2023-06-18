@@ -2,21 +2,21 @@ package typestruct
 
 import "github.com/gofiber/websocket/v2"
 
-type Messagee struct {
+type Message struct {
 	Username string `json:"username"`
 	Content  string `json:"content"`
 }
 
-type Clientt struct {
+type Client struct {
 	Username string
 	Conn     *websocket.Conn
 }
 
 type ChatRoomm struct {
-	Clients    []*Clientt
-	Register   chan *Clientt
-	Unregister chan *Clientt
-	Broadcast  chan Messagee
+	Clients    []*Client
+	Register   chan *Client
+	Unregister chan *Client
+	Broadcast  chan Message
 }
 
 type NewMessagee struct {

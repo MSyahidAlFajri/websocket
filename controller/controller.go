@@ -12,7 +12,7 @@ import (
 
 func Websocket(c *websocket.Conn) {
 	username := c.Query("username")
-	client := &typestruct.Clientt{
+	client := &typestruct.Client{
 		Username: username,
 		Conn:     c,
 	}
@@ -24,7 +24,7 @@ func Websocket(c *websocket.Conn) {
 	}()
 
 	for {
-		var message typestruct.Messagee
+		var message typestruct.Message
 		err := c.ReadJSON(&message)
 		if err != nil {
 			log.Println("Error reading message:", err)
