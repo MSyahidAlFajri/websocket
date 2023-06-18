@@ -9,13 +9,13 @@ import (
 
 func NewChatRoom() *typestruct.ChatRoomm {
 	return &typestruct.ChatRoomm{
-		Clients:    make([]*typestruct.Clientt, 0),
-		Register:   make(chan *typestruct.Clientt),
-		Unregister: make(chan *typestruct.Clientt),
-		Broadcast:  make(chan typestruct.Messagee),
+		Clients:    make([]*typestruct.Client, 0),
+		Register:   make(chan *typestruct.Client),
+		Unregister: make(chan *typestruct.Client),
+		Broadcast:  make(chan typestruct.Message),
 	}
 }
-func BroadcastMessage(message typestruct.Messagee) {
+func BroadcastMessage(message typestruct.Message) {
 	NewChatRoom().Broadcast <- message
 }
 
@@ -24,7 +24,7 @@ func Run() {
 		select {
 		case client := <-NewChatRoom().Register:
 			NewChatRoom().Clients = append(NewChatRoom().Clients, client)
-			go BroadcastMessage(typestruct.Messagee{
+			go BroadcastMessage(typestruct.Message{
 				Username: "Server",
 				Content:  fmt.Sprintf("User %s joined the chat", client.Username),
 			})
@@ -32,7 +32,7 @@ func Run() {
 			for i, c := range NewChatRoom().Clients {
 				if c == client {
 					NewChatRoom().Clients = append(NewChatRoom().Clients[:i], NewChatRoom().Clients[i+1:]...)
-					go BroadcastMessage(typestruct.Messagee{
+					go BroadcastMessage(typestruct.Message{
 						Username: "Server",
 						Content:  fmt.Sprintf("User %s left the chat", client.Username),
 					})
@@ -41,7 +41,7 @@ func Run() {
 			}
 		case message := <-NewChatRoom().Broadcast:
 			for _, client := range NewChatRoom().Clients {
-				go func(c *typestruct.Clientt) {
+				go func(c *typestruct.Client) {
 					if err := c.Conn.WriteJSON(message); err != nil {
 						log.Println("Error broadcasting message:", err)
 					}
